@@ -1,5 +1,9 @@
 package fr.bbt.mowitnow
 
+import java.io.File
+
+import scala.io.Source
+
 /**
   * Created by brice on 15/10/2017.
   */
@@ -30,5 +34,8 @@ object Utils {
     case v : Int if v > maxVal => maxVal
     case _ => newVal
   }
+
+  def loadInstructions(filePath : String) =
+    Source.fromFile(new File(filePath)).getLines()
 
 }
