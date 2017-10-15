@@ -4,6 +4,7 @@ package fr.bbt.mowitnow
   */
 
 import Utils._
+import fr.bbt.mowitnow.AppClasses.State
 /**
   * Interface Tondeuse
   */
@@ -22,16 +23,6 @@ trait TondeuseTrait {
     * Coordonnées maximum du terrain
     */
   val coordMax : (Int, Int)
-
-  /**
-    * Classe représentant l'état de la tondeuse
-    *
-    * @param coord        Coordonnées courantes
-    * @param direction    Direction courante
-    */
-  case class State(coord : (Int,Int), direction : String) {
-    override def toString: String = s"${coord._1} ${coord._2} $direction"
-  }
 
   /**
     * Liste des directions disponibles
@@ -95,7 +86,7 @@ trait TondeuseTrait {
     * Application des instructions de la tondeuse
     * @return L'état final de la tondeuse
     */
-  def launch = instructions.foldLeft(initState) {
+  def finalState = instructions.foldLeft(initState) {
     (state, instruction) => {
       instruction match {
         case 'A' => state.goAhead()
