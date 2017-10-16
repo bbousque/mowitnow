@@ -1,6 +1,6 @@
 package fr.bbt.mowitnow
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 
 import fr.bbt.mowitnow.AppClasses._
 
@@ -14,18 +14,31 @@ import scala.io.Source
   */
 object Utils {
 
-  def rotateArray(directions: Array[String]) =
-    (direction: Int) => {
+  /**
+    * Fonctions utilitaires sur un Array
+    * @param array
+    */
+  implicit class ArrayFonc(array: Array[String]) {
+    /**
+      * Rotation d'un Array
+      * @param droite   Décale les données vers la droite. False vers la gauche
+      * @return Le nouveau tableau décalé
+      */
+    def rotate(droite: Boolean) = {
       val (h, t) = {
-        if (direction >= 0)
-          directions.splitAt(directions.size - 1)
+        if (droite)
+          array.splitAt(array.size - 1)
         else
-          directions.splitAt(1)
+          array.splitAt(1)
       }
       t ++ h
     }
+  }
 
   /**
+    * Plafonnement d'une valeur entière.
+    * Si la valeur est supérieure au max on prend le max
+    * Si la valeur est négative, on retourne 0
     *
     * @param newVal
     * @param maxVal
@@ -37,25 +50,55 @@ object Utils {
     case _ => newVal
   }
 
-  def getCoordFromString(coordString : String) = coordString.split(" ") match { case Array(x,y) => (x.toInt,y.toInt) }
   /**
-    * Création de l'état à partir d'une chaîne
-    *
-    * @param stateString Chaîne sous le format X Y D
-    * @return Un état initialisé
+    * Fonction de parsing de String du fichier d'instruction
+    * @param s
     */
-  def stateFromString(stateString : String) = stateString.split(" ") match {
-    case Array(x,y,d) => State((x.toInt,y.toInt),d)
+  implicit class StringFonc(s : String) {
+    /**
+      * Création du tuple coordonnées à partir d'une chaîne de type X Y
+      * @return Le tuple (x,y)
+      */
+    def toCoord() = s.split(" ") match {
+      case Array(x, y) => (x.toInt, y.toInt)
+      case _ => throw new InstructionParsingException(s"Erreur de parsing : $s")
+    }
+    /**
+      * Création de l'état à partir d'une chaîne sous le format X Y D
+      *
+      * @return Un état initialisé
+      */
+    def toState() = s.split(" ") match {
+      case Array(x, y, d) => {
+        directionsOffset.get(d) match {
+          case Some(v) => State((x.toInt, y.toInt), d)
+          case None => throw new InstructionParsingException(s"Direction incorrect dans $s : $d")
+        }
+      }
+      case _ => throw new InstructionParsingException(s"Erreur de parsing : $s")
+    }
   }
 
-  def getInstructionsFromPath(path : String) = loadInstructions(Source.fromFile(new File(path)).getLines())
+  /**
+    * Lecteur des instructions depuis un fichier
+    * @param path Le chemin du fichier
+    * @return Le contenu du fichier dans un Iterator
+    */
+  def instructionsFromPath(path : String) =
+    loadInstructions(Source.fromFile(new File(path)).getLines())
 
+  /**
+    * Parsing de la liste complète des instructions
+    * @param lines  La liste de ligne d'instruction
+    * @return La liste des tondeuses initialisées
+    */
   def loadInstructions(lines : Iterator[String]) = {
-    val coordMax = getCoordFromString(lines.slice(0, 1).next())
+    val coordMax = lines.slice(0, 1).next().toCoord()
 
-    lines.toList.grouped(2).map {
-      case List(s, i) => new Tondeuse(stateFromString(s), i, coordMax)
-    }.toArray
+    lines.toArray.grouped(2).map {
+      case Array(s, i) => new Tondeuse(s.toState(), i, coordMax)
+      case _ => throw new InstructionParsingException(s"Erreur de format de fichier : $lines")
+    }
   }
 
 }

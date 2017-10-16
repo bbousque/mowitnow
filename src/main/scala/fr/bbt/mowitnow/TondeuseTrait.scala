@@ -2,9 +2,8 @@ package fr.bbt.mowitnow
 /**
   * Created by brice on 14/10/2017.
   */
-
 import Utils._
-import fr.bbt.mowitnow.AppClasses.State
+import fr.bbt.mowitnow.AppClasses._
 /**
   * Interface Tondeuse
   */
@@ -25,33 +24,9 @@ trait TondeuseTrait {
   val coordMax : (Int, Int)
 
   /**
-    * Liste des directions disponibles
+    * Liste des directions
     */
-  val directions = Array("N","W","S","E")
-
-  /**
-    * Fonction de rotation spécialisée pour nos directions
-    */
-  val rotate = rotateArray(directions)
-
-  /**
-    * Définition des rotations en fonction de l'instruction
-    */
-  val rotateFn = Map(
-    'D' -> rotate(1),
-    'G' -> rotate(-1)
-  )
-
-  /**
-    * Paramétrage des déplacements en fonction de la direction
-    */
-  val moveVals = Map(
-    "N" -> (0,1),
-    "E" -> (1,0),
-    "S" -> (0,-1),
-    "W" -> (-1,0)
-  )
-
+  val directions = directionsOffset.keys.toArray
   /**
     * Fonctions appliquées à l'état
     *
@@ -65,7 +40,7 @@ trait TondeuseTrait {
       * @return Le nouvel état
       */
     def rotate(instruction : Char) =
-      state.copy(direction = rotateFn.getOrElse(instruction,directions)(directions.indexOf(state.direction)))
+      state.copy(direction = directions.rotate(instruction == 'D')(directions.indexOf(state.direction)))
 
     /**
       * Nouvel état après une avancée
@@ -73,25 +48,34 @@ trait TondeuseTrait {
       * @return Le nouvel état
       */
     def goAhead() = {
-      val mv = moveVals.getOrElse(state.direction, (0,0))
+      val mv = directionsOffset.getOrElse(state.direction, (0,0))
 
       state.copy(coord = (
         maxVal(state.coord._1 + mv._1, coordMax._1),
         maxVal(state.coord._2 + mv._2, coordMax._2)
       ))
     }
+
+    /**
+      * Application de l'instruction à l'état en cours
+      * @param instruction  L'instruction A, D ou G
+      * @return             Le nouvel état
+      */
+    def apply(instruction : Char) = instruction match {
+      case 'A' => state.goAhead()
+      case 'D' | 'G' => state.rotate(instruction)
+      case _ => {
+        println(s"Instruction $instruction non comprise et ignorée")
+        state
+      }
+    }
   }
 
   /**
-    * Application des instructions de la tondeuse
+    * Calcul de l'état final après application des instructions
     * @return L'état final de la tondeuse
     */
   def finalState = instructions.foldLeft(initState) {
-    (state, instruction) => {
-      instruction match {
-        case 'A' => state.goAhead()
-        case 'D' | 'G' => state.rotate(instruction)
-      }
-    }
+    (state, instruction) => state.apply(instruction)
   }
 }
