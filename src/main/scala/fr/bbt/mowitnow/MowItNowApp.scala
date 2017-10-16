@@ -1,12 +1,14 @@
 package fr.bbt.mowitnow
 
 import java.io.FileNotFoundException
-
 import fr.bbt.mowitnow.AppClasses.InstructionParsingException
 import fr.bbt.mowitnow.Utils._
 
 /**
-  * Created by brice on 15/10/2017.
+  * Application Tondeuse
+  *
+  * Le programme prend en entrée le chemin absolu du fichier de paramétrage
+  *
   */
 object MowItNowApp extends App {
   args match {
@@ -31,6 +33,7 @@ object MowItNowApp extends App {
         case e : InstructionParsingException => println(e.getMessage)
       }
     }
+
     case _ => println("Usage : MowIItNowApp [chemin vers le fichier]")
   }
 }

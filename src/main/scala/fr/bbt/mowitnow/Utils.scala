@@ -1,6 +1,6 @@
 package fr.bbt.mowitnow
 
-import java.io.{File, FileNotFoundException}
+import java.io.File
 
 import fr.bbt.mowitnow.AppClasses._
 
@@ -13,10 +13,8 @@ import scala.io.Source
   * Fonctions Utilitaires
   */
 object Utils {
-
   /**
     * Fonctions utilitaires sur un Array
-    * @param array
     */
   implicit class ArrayFonc(array: Array[String]) {
     /**
@@ -52,14 +50,13 @@ object Utils {
 
   /**
     * Fonction de parsing de String du fichier d'instruction
-    * @param s
     */
   implicit class StringFonc(s : String) {
     /**
       * Création du tuple coordonnées à partir d'une chaîne de type X Y
       * @return Le tuple (x,y)
       */
-    def toCoord() = s.split(" ") match {
+    def toCoord = s.split(" ") match {
       case Array(x, y) => (x.toInt, y.toInt)
       case _ => throw new InstructionParsingException(s"Erreur de parsing : $s")
     }
@@ -68,7 +65,7 @@ object Utils {
       *
       * @return Un état initialisé
       */
-    def toState() = s.split(" ") match {
+    def toState = s.split(" ") match {
       case Array(x, y, d) => {
         directionsOffset.get(d) match {
           case Some(v) => State((x.toInt, y.toInt), d)
@@ -93,10 +90,10 @@ object Utils {
     * @return La liste des tondeuses initialisées
     */
   def loadInstructions(lines : Iterator[String]) = {
-    val coordMax = lines.slice(0, 1).next().toCoord()
+    val coordMax = lines.slice(0, 1).next().toCoord
 
     lines.toArray.grouped(2).map {
-      case Array(s, i) => new Tondeuse(s.toState(), i, coordMax)
+      case Array(s, i) => new Tondeuse(s.toState, i, coordMax)
       case _ => throw new InstructionParsingException(s"Erreur de format de fichier : $lines")
     }
   }

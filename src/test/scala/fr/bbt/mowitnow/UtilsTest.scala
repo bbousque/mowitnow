@@ -19,11 +19,11 @@ class UtilsTest extends FunSuite {
   }
 
   test("Parsing coordonées en tuple") {
-    assert("1 1".toCoord() equals (1,1))
+    assert("1 1".toCoord equals (1,1))
   }
 
   test("Parsing de l'état depuis une string") {
-    assert("1 1 N".toState().toString equals "1 1 N")
+    assert("1 1 N".toState.toString equals "1 1 N")
   }
 
   test("Lecture Instructions") {

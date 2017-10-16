@@ -12,25 +12,20 @@ trait TondeuseTrait {
     * Etat initial de la tondeuse
     */
   val initState : State
-
   /**
     * Instructions passées à la tondeuse
     */
   val instructions : String
-
   /**
     * Coordonnées maximum du terrain
     */
   val coordMax : (Int, Int)
-
   /**
     * Liste des directions
     */
   val directions = directionsOffset.keys.toArray
   /**
     * Fonctions appliquées à l'état
-    *
-    * @param state  L'état
     */
   implicit class StateFunc(state: State) {
     /**
@@ -41,7 +36,6 @@ trait TondeuseTrait {
       */
     def rotate(instruction : Char) =
       state.copy(direction = directions.rotate(instruction == 'D')(directions.indexOf(state.direction)))
-
     /**
       * Nouvel état après une avancée
       *
@@ -55,7 +49,6 @@ trait TondeuseTrait {
         maxVal(state.coord._2 + mv._2, coordMax._2)
       ))
     }
-
     /**
       * Application de l'instruction à l'état en cours
       * @param instruction  L'instruction A, D ou G
