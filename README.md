@@ -19,7 +19,7 @@ conserve son orientation et traite la commande suivante.</p>
 <p>Pour programmer la tondeuse, on lui fournit un fichier d'entrée construit comme suit :<ul>
 <li>La première ligne correspond aux coordonnées du coin supérieur droit de la pelouse, celles
 du coin inférieur gauche sont supposées être (0,0)</li>
-<ul>La suite du fichier permet de piloter toutes les tondeuses qui ont été déployées. Chaque
+<li>La suite du fichier permet de piloter toutes les tondeuses qui ont été déployées. Chaque
 tondeuse a deux lignes la concernant :<ul>
 <li>la première ligne donne la position initiale de la tondeuse, ainsi que son orientation. La
 position et l'orientation sont fournies sous la forme de 2 chiffres et une lettre, séparés
